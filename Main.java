@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-    // create button object(s)
+    // instantiate button object(s)
     Button button1;
 
      public static void main(String [] args) {
@@ -25,7 +25,7 @@ public class Main extends Application {
      public void start(Stage primaryStage) throws Exception {
          primaryStage.setTitle("DarryBoi.exe");
 
-         // instantinaitae...(welp can't spell).. button
+         // initialize button
          button1 = new Button();
 
          // initialize button with a string object
