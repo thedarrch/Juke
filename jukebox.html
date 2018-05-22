@@ -63,6 +63,7 @@ function reset(){
 	firstround = true;
 	yfirstround = true;
 	a=0;
+	b=0;
 
 	boxX.length = boxY.length = boxdirection.length = 1;
 	
@@ -76,7 +77,7 @@ function addxboxes(){
 	a++;
 	for (i = 0; i<boxX.length; i++){
 		boxX[i] = (Math.round(Math.random()) * 382 + 3);
-		boxY[i] = (Math.floor(Math.random() * 10) *20) + 100;
+		boxY[i] = (Math.floor(Math.random() * 10) * 20) + 100;
 		if (boxX[i] > 200){
     		boxdirection[i] = -1;
    		}
@@ -86,8 +87,8 @@ function addxboxes(){
 	}
 	
 	if(firstround == false && a%2 == 0 && boxX.length < 8){
-		boxX.push(Math.floor(Math.random()) * 394 + 3);
-		boxY.push((Math.floor(Math.random() * 10) *20) + 100);
+		boxX.push(Math.floor(Math.random()) * 382 + 3);
+		boxY.push((Math.floor(Math.random() * 10) * 20) + 100);
     	if (boxX[boxX.length - 1] > 200){
     		boxdirection.push(-1);
    		}
@@ -115,7 +116,7 @@ function addyboxes(){
 	
 	if(firstround == false && b%2 == 0 ){
 		if(yboxY.length<8){
-			yboxY.push(Math.floor(Math.random()) * 394 + 3);
+			yboxY.push(Math.floor(Math.random()) * 382 + 3);
 			yboxX.push((Math.floor(Math.random() * 10) *20) + 100);
     		if (yboxY[yboxY.length - 1] > 200){
     			yboxdirection.push(-1);
@@ -151,8 +152,6 @@ function deployyboxes(){
 		ctx.fillStyle="blue";
 		ctx.fillRect(yboxX[i], yboxY[i], 15, 15);
     	yboxY[i] += (yboxdirection[i])*boxSpeed;
-    	console.log("deploying yboxes");
-
     }	
 
 }
@@ -176,7 +175,7 @@ function game() {
     }
     else{
    
- 	if (gameOn){
+ 	  if (gameOn){
 		
  		ctx.fillStyle="lime";
     	ctx.fillRect(90,90,220,220);
@@ -202,43 +201,47 @@ function game() {
     	}
     	if (yPos < 100){
     		yPos = 100;
-    		clicked=false;
+    		clicked = false;
     	}
 
-		var xdistance = Math.abs(mx - xPos);
-    	var ydistance = Math.abs(my - yPos);
+		var xdistance = Math.abs(mx - 7.5 - xPos);
+    	var ydistance = Math.abs(my - 7.5 - yPos);
     	var distance = Math.sqrt(Math.pow(xdistance, 2) + Math.pow(ydistance, 2)); 
+    	var diagspeed = Math.sqrt(2*Math.pow(speed, 2));
 
-    	if (clicked == true){
-    		if (xPos > mx){
+        console.log(distance);
+
+    	if (clicked == true && distance >= diagspeed/2){
+    		if (xPos + 7.5 > mx){
     			xPos -= (speed*xdistance/distance);
     		}
-    		else if(xPos < mx){
+   			else if(xPos + 7.5 < mx){
     			xPos += (speed*xdistance/distance);
     		}
-
-    		if (yPos > my){
-    			yPos -= (speed*ydistance/distance);
-    		}
-    		else if(yPos < my){
-    			yPos += (speed*ydistance/distance);
-    		}
-    		if (distance < 2*speed){
-    			clicked = false;
-    		}
+   
     	}
 
-    		if(boxX[boxX.length - 1] < 0 || boxX[boxX.length - 1] > 400 || firstround == true){
-    			addxboxes();
-    			firstround = false;
-    		}
+
+        if (clicked == true && distance >= diagspeed/2){
+            if (yPos + 7.5 > my){
+                yPos -= (speed*ydistance/distance);
+            }
+            else if(yPos + 7.5 < my){
+                yPos += (speed*ydistance/distance);     
+            }   
+        }
+
+    	if(boxX[boxX.length - 1] < 0 || boxX[boxX.length - 1] > 400 || firstround == true){
+    		addxboxes();
+    		firstround = false;
+		}
     		deployxboxes();
 
 
-    		if(yboxY[yboxY.length - 1] < 0 || yboxY[yboxY.length - 1] > 400 || yfirstround == true){
-    			addyboxes();
-    			yfirstround = false;
-    		}
+    	if(yboxY[yboxY.length - 1] < 0 || yboxY[yboxY.length - 1] > 400 || yfirstround == true){
+    		addyboxes();
+			yfirstround = false;
+        }
     		deployyboxes();
     		
     	
@@ -254,10 +257,6 @@ function game() {
     		gameOn = 0;
     		}
     	}
-    	
-
-
-
 	}
 	else{
 		ctx.fillStyle="orange";
@@ -265,8 +264,9 @@ function game() {
 		ctx.fillText("gg",130,200);
 		ctx.fillText("press space to play again",50,250);
 	}
+    }
 }
-}
+
 
 function keyPush(evt) {
     switch(evt.keyCode) {
