@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+
+<title>JukeBox</title>
+
+
+
+<canvas id="gc" width="400" height="400"></canvas>
+<script>
+window.onload=function() {
+    canv=document.getElementById("gc");
+    ctx=canv.getContext("2d");
+    document.addEventListener("keydown",keyPush);
+    setInterval(game,1000/15);
+    document.addEventListener("mousemove", setMousePosition, false);
+    document.addEventListener("click", click);
+}
+
+xPos = yPos = 200;
+gameOn = 1;
+boxSpeed = 5;
+speed = 10;
+speedmax = 15;
+speedinc = 0.15;
+boxSpeedmax = 10;
+boxSpeedinc = 0.1;
+mouseX = mouseY = mx = my = 0;
+clicked = false;
+firstround = true;
+yfirstround = true;
+menu = true;
+a = b = 0;
+wave = 0;
+
+var boxX = [1];
+var boxY = [1]; 
+var boxdirection = [1];
+var yboxX = [1];
+var yboxY = [1]; 
+var yboxdirection = [1];
+
+
+function setMousePosition(e) {
+ mouseX = e.clientX;
+ mouseY = e.clientY;
+}  
+
+
+function click(){
+	mx = mouseX;
+	my = mouseY;
+	clicked = true;
+
+	ctx.fillStyle="yellow";
+	ctx.beginPath();
+    ctx.moveTo(mx, my+7);
+    ctx.lineTo(mx+7, my-7);
+    ctx.lineTo(mx-7, my-7);
+    ctx.fill();
+
+    if (gameOn == 0){
+       reset();
+    }
+    if (menu = true){
+        menu = false;
+    }
+    
+}
+
+function reset(){
+	xPos = yPos = 200;
+	gameOn = 1;
+	mouseX = mouseY = mx = my = 0;
+	clicked = false;
+	boxSpeed = 5;
+	speed = 10;
+	firstround = true;
+	yfirstround = true;
+	a=0;
+	b=0;
+    wave=0;
+
+	boxX.length = boxY.length = boxdirection.length = 1;
+	
+	yboxX.length = yboxY.length = yboxdirection.length = 1;
+
+}
+
+function addxboxes(){
+	var i;
+    wave++;
+
+	a++;
+	for (i = 0; i<boxX.length; i++){
+		boxX[i] = (Math.round(Math.random()) * 382 + 3);
+		boxY[i] = (Math.floor(Math.random() * 10) * 20) + 100;
+		if (boxX[i] > 200){
+    		boxdirection[i] = -1;
+   		}
+   		else{
+   			boxdirection[i]  = 1;
+   		}
+	}
+	
+	if(firstround == false && a%2 == 0 && boxX.length < 8){
+		boxX.push(Math.floor(Math.random()) * 382 + 3);
+		boxY.push((Math.floor(Math.random() * 10) * 20) + 100);
+    	if (boxX[boxX.length - 1] > 200){
+    		boxdirection.push(-1);
+   		}
+   		else{boxdirection.push(1);
+   		}
+	}
+	
+
+}
+
+function addyboxes(){
+	var i;
+
+	b++;
+	for (i = 0; i<yboxY.length; i++){
+		yboxX[i] = (Math.floor(Math.random() * 10) *20) + 100;
+		yboxY[i] = (Math.round(Math.random()) * 382 + 3);
+		if (yboxY[i] > 200){
+    		yboxdirection[i] = -1;
+   		}
+   		else{
+   			yboxdirection[i]  = 1;
+   		}
+	}
+	
+	if(firstround == false && b%2 == 0 ){
+		if(yboxY.length<8){
+			yboxY.push(Math.floor(Math.random()) * 382 + 3);
+			yboxX.push((Math.floor(Math.random() * 10) *20) + 100);
+    		if (yboxY[yboxY.length - 1] > 200){
+    			yboxdirection.push(-1);
+   			}
+   			else{yboxdirection.push(1);
+   			}
+   		}
+ 		if (boxSpeed < boxSpeedmax){
+ 			boxSpeed += boxSpeedinc;
+ 		}
+ 		if (speed < speedmax){
+ 			speed += speedinc;
+ 		}
+	}
+	
+
+}
+
+function deployxboxes(){
+	
+    for (var i = 0; i<boxX.length; i++){
+		ctx.fillStyle="blue";
+		ctx.fillRect(boxX[i], boxY[i], 15, 15);
+    	boxX[i] += (boxdirection[i])*boxSpeed;
+
+    }	
+
+}
+
+function deployyboxes(){
+	
+    for (var i = 0; i<yboxY.length; i++){
+		ctx.fillStyle="blue";
+		ctx.fillRect(yboxX[i], yboxY[i], 15, 15);
+    	yboxY[i] += (yboxdirection[i])*boxSpeed;
+    }	
+
+}
+
+function game() {
+	
+
+    ctx.fillStyle="black";
+    ctx.fillRect(0, 0, canv.width, canv.height);
+    
+    if (menu == true){
+    	ctx.fillStyle="red";
+		ctx.font = "75px Helvetica";
+		ctx.fillText("JUKEBOX",25,175);
+		ctx.fillStyle="blue";
+		ctx.font = "20px Comic Sans";
+		ctx.fillText("by kenny collins",25,250);
+		ctx.fillStyle="lime";
+		ctx.font = "15px Verdana";
+		ctx.fillText("(spacebar to start, mouse click to play)",35,350);
+    }
+    else{
+   
+ 	  if (gameOn){
+        ctx.fillStyle="lime";
+        ctx.font = "15px Verdana";
+        ctx.fillText("Wave: " +  wave,320,40);
+		
+ 		ctx.fillStyle="lime";
+    	ctx.fillRect(90,90,220,220);
+	
+    	ctx.fillStyle="red";
+    	ctx.beginPath();
+		ctx.arc(xPos,yPos,10,0,2*Math.PI);
+    	ctx.fill();
+
+
+
+    	
+
+    	if (xPos > 300){
+    		xPos = 300;
+    		clicked=false;
+    	}
+    	if (xPos < 100){
+    		xPos = 100;
+    		clicked=false;
+    	}
+    	if (yPos > 300){
+    		yPos = 300;
+    		clicked=false;
+    	}
+    	if (yPos < 100){
+    		yPos = 100;
+    		clicked = false;
+    	}
+
+		var xdistance = Math.abs(mx - 7.5 - xPos);
+    	var ydistance = Math.abs(my - 7.5 - yPos);
+    	var distance = Math.sqrt(Math.pow(xdistance, 2) + Math.pow(ydistance, 2)); 
+    	var diagspeed = Math.sqrt(2*Math.pow(speed, 2));
+
+
+    	if (clicked == true && distance >= diagspeed/2){
+    		if (xPos + 7.5 > mx){
+    			xPos -= (speed*xdistance/distance);
+    		}
+   			else if(xPos + 7.5 < mx){
+    			xPos += (speed*xdistance/distance);
+    		}
+   
+    	}
+
+
+        if (clicked == true && distance >= diagspeed/2){
+            if (yPos + 7.5 > my){
+                yPos -= (speed*ydistance/distance);
+            }
+            else if(yPos + 7.5 < my){
+                yPos += (speed*ydistance/distance);     
+            }   
+        }
+
+    	if(boxX[boxX.length - 1] < 0 || boxX[boxX.length - 1] > 400 || firstround == true){
+    		addxboxes();
+    		firstround = false;
+		}
+    		deployxboxes();
+
+
+    	if(yboxY[yboxY.length - 1] < 0 || yboxY[yboxY.length - 1] > 400 || yfirstround == true){
+    		addyboxes();
+			yfirstround = false;
+        }
+    		deployyboxes();
+    		
+    	
+    	
+    	var j;
+    	for(j = 0; j<boxX.length;j++){
+    		if (Math.abs(boxX[j] + 7.5 - xPos) < 15 && Math.abs(boxY[j] + 7.5 - yPos) < 15){
+    		gameOn = 0;
+    		}
+    	}
+    	for(j = 0; j<yboxY.length;j++){
+    		if (Math.abs(yboxX[j] + 7.5 - xPos) < 15 && Math.abs(yboxY[j] + 7.5 - yPos) < 15){
+    		gameOn = 0;
+    		}
+    	}
+	}
+	else{
+		ctx.fillStyle="orange";
+		ctx.font = "30px Arial";
+		ctx.fillText("gg",130,200);
+		ctx.fillText("press space to play again",50,250);
+	}
+    }
+}
+
+
+function keyPush(evt) {
+    switch(evt.keyCode) {
+        /*case 37:
+            xPos -= speed;
+            break;
+        case 38:
+            yPos -= speed;
+            break;
+        case 39:
+            xPos += speed;
+            break;
+        case 40:
+            yPos += speed;
+            break;*/
+        case 32:
+        	if (gameOn == 0){
+        		reset();
+        	}
+        	if (menu = true){
+        		menu = false;
+        	}
+            break;
+    }
+}
+</script>
+
+</html>
